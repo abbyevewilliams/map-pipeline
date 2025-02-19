@@ -1,5 +1,15 @@
 results/**
 resources/**
 logs/**
+slurm-logs/
 .snakemake
 .snakemake/**
+
+*.dot
+*.png
+*.csv
+*.tsv
+*.txt
+*.pdf
+
+snakemake-env/

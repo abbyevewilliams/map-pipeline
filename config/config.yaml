@@ -1,6 +1,5 @@
-data:
-  reads_dir: "/data/biol-silvereye/norfolk_wgs/arbor"
-  samples: "/data/biol-silvereye/ball6625/norfolk-pipeline/samples.txt"
-  reference-genome: "/data/biol-silvereye/sjoh4959/ref_genome/Zlat_2_Tgutt_ZW.fasta"
-  adapter1: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA"
-  adapter2: "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+reads_dir: "/data/biol-silvereye/norfolk_wgs/arbor"
+samples: "/data/biol-silvereye/ball6625/norfolk-pipeline/samples.txt"
+reference-genome: "/data/biol-silvereye/sjoh4959/ref_genome/Zlat_2_Tgutt_ZW.fasta"
+adapter1: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA"
+adapter2: "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
