@@ -1,5 +1,5 @@
 executor: slurm
-jobs: 10
+jobs: 20
 latency-wait: 60
 retries: 3
 
@@ -9,7 +9,10 @@ default-resources:
     runtime: 720 # 12 hours
 
 set-resources:
-    bwa-map:
+    bwa_index:
+        mem: "32G"
+        cpus_per_task: 4
+    bwa_map:
         slurm_partition: "long"
         runtime: 1440 # 24 hours
         mem: "32G"

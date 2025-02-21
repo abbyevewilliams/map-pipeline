@@ -1,4 +1,4 @@
-results/**
+*results/
 resources/**
 logs/**
 slurm-logs/
@@ -13,3 +13,5 @@ slurm-logs/
 *.pdf
 
 snakemake-env/
+
+workflow/rules/clean.smk

@@ -1,18 +1,31 @@
-# Map reads to the reference
+# Index reference
+rule bwa_index:
+    input:
+        ref=config["reference_genome"]
+    output:
+        multiext(config["reference_genome"], ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac")
+    log:
+        "results/logs/bwa_index/index.log"
+    threads: 4
+    resources:
+        mem="32GB"
+    wrapper:
+        "v5.8.2/bio/bwa-mem2/index"
+
+# Map merged reads to reference
 rule bwa_map:
     input:
-        ref=config["reference-genome"],
-        fq1="results/trimmed/{sample}.collapsed.trimmed.fastq.gz",  # Adjust to the desired output from adapterremoval
-        fq2="results/trimmed/{sample}.collapsed.trimmed.fastq.gz"   # Same file used for both paired-end (collapsed reads)
+        reads=lambda wildcards: os.path.join(config["clean_reads_dir"], wildcards.sample, f"{wildcards.sample}_U.fastq.gz"),
+        idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
         "results/mapped/{sample}.bam"
     log:
-        "results/logs/bwa-map/{sample}.log"
+        "results/logs/bwa_map/{sample}.log"
     threads: 8
     resources:
         mem="32GB"
     wrapper:
-        "v5.8.0/bio/bwa/mem"
+        "v5.8.0/bio/bwa-mem2/mem"
 
 # Sort reads
 rule samtools_sort:

@@ -3,7 +3,7 @@
 
 rule mapdamage2:
     input:
-        ref=config["reference-genome"],
+        ref=config["reference_genome"],
         bam="results/dedup/{sample}.bam",
     output:
         log="results/mapdamage/{sample}/Runtime_log.txt",  # output folder is infered from this file, so it needs to be the same folder for all output files

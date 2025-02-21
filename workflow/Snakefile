@@ -24,13 +24,10 @@ READS = ['1', '2']
 
 rule all:
     input:
-        expand("results/fastqc_initial/{sample}_R{read}_fastqc.html", sample=SAMPLES, read=READS),
-        expand("results/trimmed/{sample}.collapsed.trimmed.fastq.gz", sample=SAMPLES),
-        expand("results/fastqc_post_trim/{sample}_collapsed_fastqc.html", sample=SAMPLES),
         expand("results/dedup/{sample}.bam", sample=SAMPLES),
-        expand("results/mapdamage/{sample}/Runtime_log.txt", sample=SAMPLES),
         expand("results/dedup/{sample}.stats", sample=SAMPLES),
-        expand("results/dedup/{sample}.depth", sample=SAMPLES)
+        expand("results/dedup/{sample}.depth", sample=SAMPLES),
+        expand("results/mapdamage/{sample}/Runtime_log.txt", sample=SAMPLES)
 
 localrules:
     all
@@ -39,6 +36,5 @@ localrules:
 #     Rule Modules
 # =================================================================================================
 
-include: "rules/clean.smk"
 include: "rules/map.smk"
 include: "rules/damage.smk"
