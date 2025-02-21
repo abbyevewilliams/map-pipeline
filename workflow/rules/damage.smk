@@ -17,5 +17,8 @@ rule mapdamage2:
         rescaled_bam="results/mapdamage/{sample}.rescaled.bam" # uncomment if you want the rescaled BAM file
     log:
         "results/logs/mapdamage/{sample}.log"
+    threads: 4
+    resources:
+        mem="64GB"
     wrapper:
         "v5.8.0/bio/mapdamage2"

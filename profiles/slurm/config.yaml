@@ -1,19 +1,9 @@
 executor: slurm
 jobs: 20
 latency-wait: 60
-retries: 3
+retries: 1
 
 default-resources:
     slurm_partition: "short"
     slurm_account:   "biol-silvereye"
     runtime: 720 # 12 hours
-
-set-resources:
-    bwa_index:
-        mem: "32G"
-        cpus_per_task: 4
-    bwa_map:
-        slurm_partition: "long"
-        runtime: 1440 # 24 hours
-        mem: "32G"
-        cpus_per_task: 8

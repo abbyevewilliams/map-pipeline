@@ -24,10 +24,13 @@ READS = ['1', '2']
 
 rule all:
     input:
-        expand("results/dedup/{sample}.bam", sample=SAMPLES),
-        expand("results/dedup/{sample}.stats", sample=SAMPLES),
-        expand("results/dedup/{sample}.depth", sample=SAMPLES),
-        expand("results/mapdamage/{sample}/Runtime_log.txt", sample=SAMPLES)
+        expand("results/sorted/{sample}.bam.bai", sample=SAMPLES),              # indexed bams
+        expand("results/dedup/{sample}.bam", sample=SAMPLES),                   # deduplicated bams
+        expand("results/dedup/{sample}.stats", sample=SAMPLES),                 # mapping stats
+        expand("results/dedup/{sample}.depth", sample=SAMPLES),                 # depth stats
+        "results/mapping_summary.txt"                                           # summary of stats
+        "results/avg_depth.txt"                                                 # average depth
+        expand("results/mapdamage/{sample}/Runtime_log.txt", sample=SAMPLES)    # mapdamage results
 
 localrules:
     all
