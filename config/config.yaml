@@ -1,3 +1,3 @@
-clean_reads_dir: "/data/biol-silvereye/ball6625/nf-polish/museum-results/05.low_complex"
-samples: "/data/biol-silvereye/ball6625/map-pipeline/samples.txt"
+clean_reads_dir: "/data/biol-silvereye/norfolk_wgs/novogene"
+samples: "/data/biol-silvereye/ball6625/map-pipeline/contemporary-samples.txt"
 reference_genome: "/data/biol-silvereye/ball6625/ref-genome/Zlat_2_Tgutt_ZW.fasta"

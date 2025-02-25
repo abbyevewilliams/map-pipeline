@@ -5,6 +5,7 @@
 # Packages
 import pandas as pd
 import os
+import glob
 
 # Point to config file
 configfile: "config/config.yaml"
@@ -13,8 +14,12 @@ configfile: "config/config.yaml"
 with open(config["samples"]) as f:
     SAMPLES = [line.strip() for line in f]
 
-# State reads
-READS = ['1', '2']
+# Function for finding lanes
+def get_lanes(sample):
+    """Find all unique lane identifiers for a given sample, preserving sequencing run information."""
+    lane_files = glob.glob(f"{config['clean_reads_dir']}/{sample}/{sample}_*_1.fq.gz")
+    lanes = sorted(set(f.rsplit("_1.fq.gz", 1)[0].split(f"{sample}_")[-1] for f in lane_files))
+    return lanes
 
 # =================================================================================================
 #     Default "All" Target Rule
@@ -22,15 +27,31 @@ READS = ['1', '2']
 
 # This rule requests that other rules be run.
 
+# rule all:
+#     input:
+        
+#         expand("results/dedup/{sample}.bam", sample=SAMPLES),                                 # deduplicated bams
+#         expand("results/dedup/{sample}.stats", sample=SAMPLES),                               # mapping stats
+#         expand("results/dedup/{sample}.depth", sample=SAMPLES),                               # depth stats
+#         "results/mapping_summary.txt",                                                        # summary of stats
+#         "results/avg_depth.txt",                                                              # average depth
+#         expand("results/mapdamage/{sample}/Fragmisincorporation_plot.pdf", sample=SAMPLES),   # mapdamage results
+#         expand("results/mapdamage/{sample}/{sample}.rescaled.bam", sample=SAMPLES)            # mapdamage rescaled bam
+
 rule all:
     input:
-        expand("results/sorted/{sample}.bam.bai", sample=SAMPLES),              # indexed bams
-        expand("results/dedup/{sample}.bam", sample=SAMPLES),                   # deduplicated bams
-        expand("results/dedup/{sample}.stats", sample=SAMPLES),                 # mapping stats
-        expand("results/dedup/{sample}.depth", sample=SAMPLES),                 # depth stats
-        "results/mapping_summary.txt"                                           # summary of stats
-        "results/avg_depth.txt"                                                 # average depth
-        expand("results/mapdamage/{sample}/Runtime_log.txt", sample=SAMPLES)    # mapdamage results
+        # Expand mapped bams for each sample and its lanes
+        [f"results/mapped/{sample}--{lane}.bam" for sample in SAMPLES for lane in get_lanes(sample)] +
+        # Expand indexed bams
+        [f"results/sorted/{sample}--{lane}.bam.bai" for sample in SAMPLES for lane in get_lanes(sample)] +
+        # Expand other outputs
+        [f"results/dedup/{sample}.bam" for sample in SAMPLES] +
+        [f"results/dedup/{sample}.stats" for sample in SAMPLES] +
+        [f"results/dedup/{sample}.depth" for sample in SAMPLES] +
+        ["results/mapping_summary.txt"] + 
+        ["results/avg_depth.txt"] + 
+        [f"results/mapdamage/{sample}/Fragmisincorporation_plot.pdf" for sample in SAMPLES] +
+        [f"results/mapdamage/{sample}/{sample}.rescaled.bam" for sample in SAMPLES]
 
 localrules:
     all

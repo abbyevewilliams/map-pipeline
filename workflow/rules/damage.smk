@@ -14,9 +14,11 @@ rule mapdamage2:
         len="results/mapdamage/{sample}/Length_plot.pdf",
         lg_dist="results/mapdamage/{sample}/lgdistribution.txt",
         misincorp="results/mapdamage/{sample}/misincorporation.txt",
-        rescaled_bam="results/mapdamage/{sample}.rescaled.bam" # uncomment if you want the rescaled BAM file
+        rescaled_bam="results/mapdamage/{sample}/{sample}.rescaled.bam"
     log:
         "results/logs/mapdamage/{sample}.log"
+    params:
+        extra="--rescale"
     threads: 4
     resources:
         mem="64GB"

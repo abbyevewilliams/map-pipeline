@@ -12,15 +12,27 @@ rule bwa_index:
     wrapper:
         "v5.8.2/bio/bwa-mem2/index"
 
-# Map merged reads to reference
+# Function to get the correct reads based on sample and lane
+
+def get_reads(sample, lane):
+    # Use glob to find the files matching the pattern
+    read_1 = glob.glob(f"{config['clean_reads_dir']}/{sample}/{sample}_{lane}_1.fq.gz")
+    read_2 = glob.glob(f"{config['clean_reads_dir']}/{sample}/{sample}_{lane}_2.fq.gz")
+    
+    # Return the list of matched files
+    return read_1 + read_2  # Combine R1 and R2 files
+
+# Mapping
 rule bwa_map:
     input:
-        reads=lambda wildcards: os.path.join(config["clean_reads_dir"], wildcards.sample, f"{wildcards.sample}_U.fastq.gz"),
+        reads=lambda wildcards: get_reads(wildcards.sample, wildcards.lane),
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
-        "results/mapped/{sample}.bam"
+        "results/mapped/{sample}--{lane}.bam"
+    params:
+        rg="@RG\tID:{lane}\tSM:{sample}\tLB:{sample}_lib\tPL:ILLUMINA\tPU:{lane}"
     log:
-        "results/logs/bwa_map/{sample}.log"
+        "results/logs/bwa_map/{sample}--{lane}.log"
     threads: 8
     resources:
         mem="32GB"
@@ -30,11 +42,11 @@ rule bwa_map:
 # Sort reads
 rule samtools_sort:
     input:
-        "results/mapped/{sample}.bam"
+        "results/mapped/{sample}--{lane}.bam"
     output:
-        "results/sorted/{sample}.bam"
+        "results/sorted/{sample}--{lane}.bam"
     log:
-        "results/logs/samtools_sort/{sample}.log"
+        "results/logs/samtools_sort/{sample}--{lane}.log"
     threads: 4
     resources:
         mem="100GB"
@@ -44,20 +56,39 @@ rule samtools_sort:
 # Index the sorted bam file
 rule samtools_index:
     input:
-        "results/sorted/{sample}.bam"
+        "results/sorted/{sample}--{lane}.bam"
     output:
-        "results/sorted/{sample}.bam.bai"
+        "results/sorted/{sample}--{lane}.bam.bai"
     log:
-        "results/logs/samtools_index/{sample}.log"
+        "results/logs/samtools_index/{sample}--{lane}.log"
     resources:
         mem="8GB"
     wrapper:
         "v5.8.0/bio/samtools/index"
 
+# Merge bams from different lanes
+def get_bams_to_merge(wildcards):
+    """Finds all BAM files to merge for a given sample by identifying its lanes."""
+    lanes = get_lanes(wildcards.sample)
+    return [f"results/sorted/{wildcards.sample}--{lane}.bam" for lane in lanes]
+
+rule samtools_merge:
+    input:
+        get_bams_to_merge
+    output:
+        "results/merged/{sample}.bam"
+    log:
+        "results/logs/samtools_merge/{sample}.log"
+    threads: 8
+    resources:
+        mem="32GB"
+    wrapper:
+        "v5.8.2/bio/samtools/merge"
+
 # Mark duplicates
 rule markduplicates_bam:
     input:
-        bams="results/sorted/{sample}.bam"
+        bams="results/merged/{sample}.bam"
     output:
         bam="results/dedup/{sample}.bam",
         metrics="results/dedup/{sample}.metrics.txt"
@@ -102,7 +133,7 @@ rule samtools_stats:
 #Summarise key stats across all samples
 rule summarise_samtools_stats:
     input:
-        stats_files="results/dedup/{sample}.stats"
+        stats_files=expand("results/dedup/{sample}.stats", sample=SAMPLES)
     output:
         "results/mapping_summary.txt"
     shell:
@@ -122,7 +153,7 @@ rule summarise_samtools_stats:
 # Calculate average depth for each sample
 rule compute_average_depth:
     input:
-        depth_files="results/dedup/{sample}.depth"
+        depth_files=expand("results/dedup/{sample}.depth", sample=SAMPLES)
     output:
         "results/avg_depth.txt"
     shell:
