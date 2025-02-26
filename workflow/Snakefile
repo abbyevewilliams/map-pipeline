@@ -41,7 +41,7 @@ def get_lanes(sample):
 rule all:
     input:
         # Expand mapped bams for each sample and its lanes
-        [f"results/mapped/{sample}--{lane}.bam" for sample in SAMPLES for lane in get_lanes(sample)] +
+        [f"results/sorted/{sample}--{lane}.bam" for sample in SAMPLES for lane in get_lanes(sample)] +
         # Expand indexed bams
         [f"results/sorted/{sample}--{lane}.bam.bai" for sample in SAMPLES for lane in get_lanes(sample)] +
         # Expand other outputs

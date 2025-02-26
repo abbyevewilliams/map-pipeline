@@ -28,30 +28,31 @@ rule bwa_map:
         reads=lambda wildcards: get_reads(wildcards.sample, wildcards.lane),
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
-        "results/mapped/{sample}--{lane}.bam"
+        "results/sorted/{sample}--{lane}.bam"
     params:
-        rg="@RG\tID:{lane}\tSM:{sample}\tLB:{sample}_lib\tPL:ILLUMINA\tPU:{lane}"
+        extra=r"-R '@RG\tID:{lane}\tSM:{sample}\tLB:{sample}_lib\tPL:ILLUMINA\tPU:{lane}'",
+        sort="samtools",  # Can be 'none', 'samtools', or 'picard'.
     log:
         "results/logs/bwa_map/{sample}--{lane}.log"
     threads: 8
     resources:
-        mem="32GB"
+        mem="64GB"
     wrapper:
         "v5.8.0/bio/bwa-mem2/mem"
 
 # Sort reads
-rule samtools_sort:
-    input:
-        "results/mapped/{sample}--{lane}.bam"
-    output:
-        "results/sorted/{sample}--{lane}.bam"
-    log:
-        "results/logs/samtools_sort/{sample}--{lane}.log"
-    threads: 4
-    resources:
-        mem="100GB"
-    wrapper:
-        "v5.8.0/bio/samtools/sort"
+#rule samtools_sort:
+#    input:
+#        "results/mapped/{sample}--{lane}.bam"
+#    output:
+#        "results/sorted/{sample}--{lane}.bam"
+#    log:
+#        "results/logs/samtools_sort/{sample}--{lane}.log"
+#    threads: 4
+#    resources:
+#        mem="100GB"
+#    wrapper:
+#        "v5.8.0/bio/samtools/sort"
 
 # Index the sorted bam file
 rule samtools_index:
