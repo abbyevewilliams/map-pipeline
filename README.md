@@ -22,9 +22,12 @@ Use conda/mamba to install the environment from the `environment.yaml` provided.
 
 `conda create --prefix ./snakemake-env --file environment.yaml`
 
-You should edit the file paths in `config/config.yaml` and add any appropriate profiles in `profiles/` before running snakemake.
+Do the following prior to running: 
+- edit file paths in `config/config.yaml`
+- add any appropriate profiles in `profiles/`
+- edit the `run.sh` depending on your HPC environment
 
-To run snakemake on a slurm-based cluster, run the pipeline with:
+To run snakemake, run:
 
 `sbatch run.sh`
 
