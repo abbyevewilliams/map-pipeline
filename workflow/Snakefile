@@ -25,19 +25,6 @@ def get_lanes(sample):
 #     Default "All" Target Rule
 # =================================================================================================
 
-# This rule requests that other rules be run.
-
-# rule all:
-#     input:
-        
-#         expand("results/dedup/{sample}.bam", sample=SAMPLES),                                 # deduplicated bams
-#         expand("results/dedup/{sample}.stats", sample=SAMPLES),                               # mapping stats
-#         expand("results/dedup/{sample}.depth", sample=SAMPLES),                               # depth stats
-#         "results/mapping_summary.txt",                                                        # summary of stats
-#         "results/avg_depth.txt",                                                              # average depth
-#         expand("results/mapdamage/{sample}/Fragmisincorporation_plot.pdf", sample=SAMPLES),   # mapdamage results
-#         expand("results/mapdamage/{sample}/{sample}.rescaled.bam", sample=SAMPLES)            # mapdamage rescaled bam
-
 rule all:
     input:
         # Expand mapped bams for each sample and its lanes
@@ -49,9 +36,7 @@ rule all:
         [f"results/dedup/{sample}.stats" for sample in SAMPLES] +
         [f"results/dedup/{sample}.depth" for sample in SAMPLES] +
         ["results/mapping_summary.txt"] + 
-        ["results/avg_depth.txt"] + 
-        [f"results/mapdamage/{sample}/Fragmisincorporation_plot.pdf" for sample in SAMPLES] +
-        [f"results/mapdamage/{sample}/{sample}.rescaled.bam" for sample in SAMPLES]
+        ["results/avg_depth.txt"]
 
 localrules:
     all
@@ -61,4 +46,3 @@ localrules:
 # =================================================================================================
 
 include: "rules/map.smk"
-include: "rules/damage.smk"
