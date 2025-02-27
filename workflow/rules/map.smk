@@ -18,28 +18,16 @@ rule bwa_map:
         reads=lambda wildcards: os.path.join(config["clean_reads_dir"], wildcards.sample, f"{wildcards.sample}_U.fastq.gz"),
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
-        "results/mapped/{sample}.bam"
+        "results/sorted/{sample}.bam"
     log:
         "results/logs/bwa_map/{sample}.log"
+    params:
+        sort="samtools"
     threads: 8
     resources:
         mem="32GB"
     wrapper:
         "v5.8.0/bio/bwa-mem2/mem"
-
-# Sort reads
-rule samtools_sort:
-    input:
-        "results/mapped/{sample}.bam"
-    output:
-        "results/sorted/{sample}.bam"
-    log:
-        "results/logs/samtools_sort/{sample}.log"
-    threads: 4
-    resources:
-        mem="100GB"
-    wrapper:
-        "v5.8.0/bio/samtools/sort"
 
 # Index the sorted bam file
 rule samtools_index:
