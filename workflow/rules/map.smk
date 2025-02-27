@@ -43,21 +43,20 @@ rule samtools_index:
         "v5.8.0/bio/samtools/index"
 
 # Mark duplicates
-rule markduplicates_bam:
+rule dedup:
     input:
-        bams="results/sorted/{sample}.bam"
+        bam="results/sorted/{sample}.bam",
+        bai="results/sorted/{sample}.bam.bai"
     output:
-        bam="results/dedup/{sample}.bam",
-        metrics="results/dedup/{sample}.metrics.txt"
-    log:
-        "results/logs/markduplicates/{sample}.log"
-    params:
-        extra="--REMOVE_DUPLICATES true"
-    threads: 4
-    resources:
-        mem="64GB"
-    wrapper:
-        "v5.8.0/bio/picard/markduplicates"
+        dedup_bam="results/dedup/{sample}.bam",
+        log="logs/dedup/{sample}.log"
+    conda:
+        "/data/biol-silvereye/ball6625/map-pipeline/envs/dedup.yaml"
+    shell:
+        """
+        DeDup -i {input.bam} -o {output.dedup_bam} -m
+
+        """
 
 # Calculate depth
 rule samtools_depth:
@@ -90,7 +89,7 @@ rule samtools_stats:
 #Summarise key stats across all samples
 rule summarise_samtools_stats:
     input:
-        stats_files="results/dedup/{sample}.stats"
+        stats_files=expand("results/dedup/{sample}.stats", sample=SAMPLES)
     output:
         "results/mapping_summary.txt"
     shell:
@@ -110,7 +109,7 @@ rule summarise_samtools_stats:
 # Calculate average depth for each sample
 rule compute_average_depth:
     input:
-        depth_files="results/dedup/{sample}.depth"
+        depth_files=expand("results/dedup/{sample}.depth", sample=SAMPLES)
     output:
         "results/avg_depth.txt"
     shell:
