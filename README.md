@@ -1,18 +1,18 @@
 # A snakemake pipeline for the Norfolk Island Zosterops project
 *Abby Williams, University of Oxford, 2025*
 
-A pipeline for mapping raw Illumina sequencing reads from avian museum samples to the *Zosterops lateralis* pseudochromosome assembly.
+A pipeline for cleaned sequencing reads from avian museum samples to the *Zosterops lateralis* pseudochromosome assembly. 
+This pipeline is specialised to work with merged, paired-end reads that have already been cleaned using e.g. [nf-polish](https://github.com/MozesBlom/nf-polish).
 
 ---
 
 **Workflow**
 
-Specific steps are outlined below:
-1. Index the genome using BWA-MEM2
-2. Map reads to the *Zosterops lateralis* pseudochrome assembly using BWA-MEM2
-3. Deduplication using PicardMarkDuplicates
-4. Calculate mapping stats and depth using Samtools
-5. Assess DNA damage using MapDamage2
+Main steps are outlined below:
+1. Map reads to the *Zosterops lateralis* pseudochrome assembly using [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2)
+2. Deduplication of merged paired end reads using [DeDup](https://github.com/apeltzer/DeDup)
+3. Calculate mapping stats and depth using [Samtools](https://github.com/samtools/samtools)
+4. Assess DNA damage using [MapDamage2](https://github.com/ginolhac/mapDamage)
 
 ---
 
@@ -27,7 +27,7 @@ Do the following prior to running:
 - add any appropriate profiles in `profiles/`
 - edit the `run.sh` depending on your HPC environment
 
-To run snakemake, run:
+Then run as appropriate for your HPC. For slurm-based schedulers, run:
 
 `sbatch run.sh`
 
