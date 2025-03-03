@@ -8,3 +8,4 @@ dependencies:
   - snakemake
   - snakemake-executor-plugin-slurm
   - conda
+  - dedup=0.12.8

@@ -18,28 +18,16 @@ rule bwa_map:
         reads=lambda wildcards: os.path.join(config["clean_reads_dir"], wildcards.sample, f"{wildcards.sample}_U.fastq.gz"),
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
-        "results/mapped/{sample}.bam"
+        "results/sorted/{sample}.bam"
     log:
         "results/logs/bwa_map/{sample}.log"
+    params:
+        sort="samtools"
     threads: 8
     resources:
         mem="32GB"
     wrapper:
         "v5.8.0/bio/bwa-mem2/mem"
-
-# Sort reads
-rule samtools_sort:
-    input:
-        "results/mapped/{sample}.bam"
-    output:
-        "results/sorted/{sample}.bam"
-    log:
-        "results/logs/samtools_sort/{sample}.log"
-    threads: 4
-    resources:
-        mem="100GB"
-    wrapper:
-        "v5.8.0/bio/samtools/sort"
 
 # Index the sorted bam file
 rule samtools_index:
@@ -54,22 +42,27 @@ rule samtools_index:
     wrapper:
         "v5.8.0/bio/samtools/index"
 
-# Mark duplicates
-rule markduplicates_bam:
+# Remove duplicates
+rule dedup:
     input:
-        bams="results/sorted/{sample}.bam"
+        bam="results/sorted/{sample}.bam"
     output:
-        bam="results/dedup/{sample}.bam",
-        metrics="results/dedup/{sample}.metrics.txt"
+        bam=temp("results/dedup/{sample}.bam")
+    conda: 
+        "../../envs/dedup.yaml"
     log:
-        "results/logs/markduplicates/{sample}.log"
-    params:
-        extra="--REMOVE_DUPLICATES true"
-    threads: 4
+        "results/logs/dedup/{sample}.log"
     resources:
-        mem="64GB"
-    wrapper:
-        "v5.8.0/bio/picard/markduplicates"
+        mem="100GB"
+    shell:
+        """
+        export _JAVA_OPTIONS="-Xmx90G"
+        bam={output.bam}
+        mkdir -p $(dirname $bam)
+        dedup -i {input.bam} -m -o $(dirname $bam);
+        mv ${{bam%%.bam}}_rmdup.bam $bam
+
+        """
 
 # Calculate depth
 rule samtools_depth:
@@ -102,7 +95,7 @@ rule samtools_stats:
 #Summarise key stats across all samples
 rule summarise_samtools_stats:
     input:
-        stats_files="results/dedup/{sample}.stats"
+        stats_files=expand("results/dedup/{sample}.stats", sample=SAMPLES)
     output:
         "results/mapping_summary.txt"
     shell:
@@ -122,9 +115,10 @@ rule summarise_samtools_stats:
 # Calculate average depth for each sample
 rule compute_average_depth:
     input:
-        depth_files="results/dedup/{sample}.depth"
+        depth_files=expand("results/dedup/{sample}.depth", sample=SAMPLES)
     output:
         "results/avg_depth.txt"
+    priority: 100
     shell:
         """
         echo -e "Sample\tAverage_Depth" > {output}
