@@ -20,7 +20,7 @@ Main steps are outlined below:
 
 Use conda/mamba to install the environment from the `environment.yaml` provided.
 
-`conda create --prefix ./snakemake-env --file environment.yaml`
+`mamba create --prefix ./snakemake-env --file environment.yaml`
 
 Do the following prior to running: 
 - edit file paths in `config/config.yaml`
