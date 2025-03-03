@@ -42,19 +42,25 @@ rule samtools_index:
     wrapper:
         "v5.8.0/bio/samtools/index"
 
-# Mark duplicates
+# Remove duplicates
 rule dedup:
     input:
-        bam="results/sorted/{sample}.bam",
-        bai="results/sorted/{sample}.bam.bai"
+        bam="results/sorted/{sample}.bam"
     output:
-        dedup_bam="results/dedup/{sample}.bam",
-        log="logs/dedup/{sample}.log"
-    conda:
-        "/data/biol-silvereye/ball6625/map-pipeline/envs/dedup.yaml"
+        bam=temp("results/dedup/{sample}.bam")
+    conda: 
+        "../../envs/dedup.yaml"
+    log:
+        "results/logs/dedup/{sample}.log"
+    resources:
+        mem="100GB"
     shell:
         """
-        DeDup -i {input.bam} -o {output.dedup_bam} -m
+        export _JAVA_OPTIONS="-Xmx90G"
+        bam={output.bam}
+        mkdir -p $(dirname $bam)
+        dedup -i {input.bam} -m -o $(dirname $bam);
+        mv ${{bam%%.bam}}_rmdup.bam $bam
 
         """
 
@@ -112,6 +118,7 @@ rule compute_average_depth:
         depth_files=expand("results/dedup/{sample}.depth", sample=SAMPLES)
     output:
         "results/avg_depth.txt"
+    priority: 100
     shell:
         """
         echo -e "Sample\tAverage_Depth" > {output}
