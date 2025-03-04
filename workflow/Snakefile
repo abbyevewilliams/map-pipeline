@@ -28,16 +28,16 @@ def get_lanes(sample):
 rule all:
     input:
         # Expand mapped bams for each sample and its lanes
-        [f"results/sorted/{sample}--{lane}.bam" for sample in SAMPLES for lane in get_lanes(sample)] +
+        [f"contemporary-results/sorted/{sample}--{lane}.bam" for sample in SAMPLES for lane in get_lanes(sample)] +
         # Expand indexed bams
-        [f"results/sorted/{sample}--{lane}.bam.bai" for sample in SAMPLES for lane in get_lanes(sample)] +
+        [f"contemporary-results/sorted/{sample}--{lane}.bam.bai" for sample in SAMPLES for lane in get_lanes(sample)] +
         # Expand other outputs
-        [f"results/dedup/{sample}.bam" for sample in SAMPLES] +
-        [f"results/dedup/{sample}.bam.bai" for sample in SAMPLES] +
-        [f"results/dedup/{sample}.stats" for sample in SAMPLES] +
-        [f"results/dedup/{sample}.depth" for sample in SAMPLES] +
-        ["results/mapping_summary.txt"] + 
-        ["results/avg_depth.txt"]
+        [f"contemporary-results/dedup/{sample}.bam" for sample in SAMPLES] +
+        [f"contemporary-results/dedup/{sample}.bam.bai" for sample in SAMPLES] +
+        [f"contemporary-results/dedup/{sample}.stats" for sample in SAMPLES] +
+        [f"contemporary-results/dedup/{sample}.depth" for sample in SAMPLES] +
+        ["contemporary-results/mapping_summary.txt"] + 
+        ["contemporary-results/avg_depth.txt"]
 
 localrules:
     all

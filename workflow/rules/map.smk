@@ -5,7 +5,7 @@ rule bwa_index:
     output:
         multiext(config["reference_genome"], ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac")
     log:
-        "results/logs/bwa_index/index.log"
+        "contemporary-results/logs/bwa_index/index.log"
     threads: 4
     resources:
         mem="32GB"
@@ -28,12 +28,12 @@ rule bwa_map:
         reads=lambda wildcards: get_reads(wildcards.sample, wildcards.lane),
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
-        "results/sorted/{sample}--{lane}.bam"
+        "contemporary-results/sorted/{sample}--{lane}.bam"
     params:
         extra=r"-R '@RG\tID:{lane}\tSM:{sample}\tLB:{sample}_lib\tPL:ILLUMINA\tPU:{lane}'",
         sort="samtools",  # Can be 'none', 'samtools', or 'picard'.
     log:
-        "results/logs/bwa_map/{sample}--{lane}.log"
+        "contemporary-results/logs/bwa_map/{sample}--{lane}.log"
     threads: 8
     resources:
         mem="64GB"
@@ -43,11 +43,11 @@ rule bwa_map:
 # Index the sorted bam file
 rule samtools_index:
     input:
-        "results/sorted/{sample}--{lane}.bam"
+        "contemporary-results/sorted/{sample}--{lane}.bam"
     output:
-        "results/sorted/{sample}--{lane}.bam.bai"
+        "contemporary-results/sorted/{sample}--{lane}.bam.bai"
     log:
-        "results/logs/samtools_index/{sample}--{lane}.log"
+        "contemporary-results/logs/samtools_index/{sample}--{lane}.log"
     resources:
         mem="8GB"
     wrapper:
@@ -57,15 +57,15 @@ rule samtools_index:
 def get_bams_to_merge(wildcards):
     """Finds all BAM files to merge for a given sample by identifying its lanes."""
     lanes = get_lanes(wildcards.sample)
-    return [f"results/sorted/{wildcards.sample}--{lane}.bam" for lane in lanes]
+    return [f"contemporary-results/sorted/{wildcards.sample}--{lane}.bam" for lane in lanes]
 
 rule samtools_merge:
     input:
         get_bams_to_merge
     output:
-        "results/merged/{sample}.bam"
+        "contemporary-results/merged/{sample}.bam"
     log:
-        "results/logs/samtools_merge/{sample}.log"
+        "contemporary-results/logs/samtools_merge/{sample}.log"
     threads: 8
     resources:
         mem="32GB"
@@ -75,12 +75,12 @@ rule samtools_merge:
 # Mark duplicates
 rule markduplicates_bam:
     input:
-        bams="results/merged/{sample}.bam"
+        bams="contemporary-results/merged/{sample}.bam"
     output:
-        bam="results/dedup/{sample}.bam",
-        metrics="results/dedup/{sample}.metrics.txt"
+        bam="contemporary-results/dedup/{sample}.bam",
+        metrics="contemporary-results/dedup/{sample}.metrics.txt"
     log:
-        "results/logs/markduplicates/{sample}.log"
+        "contemporary-results/logs/markduplicates/{sample}.log"
     params:
         extra="--REMOVE_DUPLICATES true"
     threads: 4
@@ -92,11 +92,11 @@ rule markduplicates_bam:
 # Index the deduped bam file
 rule samtools_index_dedup:
     input:
-        "results/dedup/{sample}.bam"
+        "contemporary-results/dedup/{sample}.bam"
     output:
-        "results/dedup/{sample}.bam.bai"
+        "contemporary-results/dedup/{sample}.bam.bai"
     log:
-        "results/logs/samtools_index_dedup/{sample}.log"
+        "contemporary-results/logs/samtools_index_dedup/{sample}.log"
     resources:
         mem="8GB"
     wrapper:
@@ -105,11 +105,11 @@ rule samtools_index_dedup:
 # Calculate depth
 rule samtools_depth:
     input:
-        bams="results/dedup/{sample}.bam"
+        bams="contemporary-results/dedup/{sample}.bam"
     output:
-        "results/dedup/{sample}.depth"
+        "contemporary-results/dedup/{sample}.depth"
     log:
-        "results/logs/samtools_depth/{sample}.log"
+        "contemporary-results/logs/samtools_depth/{sample}.log"
     threads: 4
     resources:
         mem="32GB"
@@ -119,11 +119,11 @@ rule samtools_depth:
 # Calculate stats
 rule samtools_stats:
     input:
-        bam="results/dedup/{sample}.bam"
+        bam="contemporary-results/dedup/{sample}.bam"
     output:
-        "results/dedup/{sample}.stats"
+        "contemporary-results/dedup/{sample}.stats"
     log:
-        "results/logs/samtools_stats/{sample}.log"
+        "contemporary-results/logs/samtools_stats/{sample}.log"
     threads: 4
     resources:
         mem="32GB"
@@ -133,9 +133,9 @@ rule samtools_stats:
 #Summarise key stats across all samples
 rule summarise_samtools_stats:
     input:
-        stats_files=expand("results/dedup/{sample}.stats", sample=SAMPLES)
+        stats_files=expand("contemporary-results/dedup/{sample}.stats", sample=SAMPLES)
     output:
-        "results/mapping_summary.txt"
+        "contemporary-results/mapping_summary.txt"
     shell:
         """
         echo -e "Sample\tTotal_Reads\tMapped_Reads\tPercent_Mapped\tError_Rate\tAvg_Quality" > {output}
@@ -153,9 +153,9 @@ rule summarise_samtools_stats:
 # Calculate average depth for each sample
 rule compute_average_depth:
     input:
-        depth_files=expand("results/dedup/{sample}.depth", sample=SAMPLES)
+        depth_files=expand("contemporary-results/dedup/{sample}.depth", sample=SAMPLES)
     output:
-        "results/avg_depth.txt"
+        "contemporary-results/avg_depth.txt"
     shell:
         """
         echo -e "Sample\tAverage_Depth" > {output}
