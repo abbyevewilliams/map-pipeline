@@ -14,11 +14,40 @@ rule mapdamage2:
         len="results/mapdamage/{sample}/Length_plot.pdf",
         lg_dist="results/mapdamage/{sample}/lgdistribution.txt",
         misincorp="results/mapdamage/{sample}/misincorporation.txt",
-        rescaled_bam="results/mapdamage/{sample}.rescaled.bam" # uncomment if you want the rescaled BAM file
+        rescaled_bam="results/mapdamage/{sample}/{sample}.rescaled.bam" # uncomment if you want the rescaled BAM file
     log:
         "results/logs/mapdamage/{sample}.log"
-    threads: 4
+    params:
+        extra="--rescale"
+    threads: 8
     resources:
         mem="64GB"
     wrapper:
         "v5.8.0/bio/mapdamage2"
+
+# Sort rescaled bam file
+rule samtools_sort_rescaled:
+    input:
+        "mapped/{sample}.rescaled.bam",
+    output:
+        "mapped/{sample}.sorted.bam",
+    log:
+        "logs/samtools_sort_rescaled/{sample}.log",
+    threads: 8
+    resources:
+        mem="8GB"
+    wrapper:
+        "v5.8.3/bio/samtools/sort"
+
+# Index rescaled bam file
+rule samtools_index_rescaled:
+    input:
+        "results/mapdamage/{sample}/{sample}.rescaled.bam"
+    output:
+        "results/mapdamage/{sample}/{sample}.rescaled.bam.bai"
+    log:
+        "results/logs/samtools_index_rescaled/{sample}.log"
+    resources:
+        mem="8GB"
+    wrapper:
+        "v5.8.0/bio/samtools/index"

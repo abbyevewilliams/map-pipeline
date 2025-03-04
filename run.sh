@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=snakemake
-#SBATCH --partition=short
-#SBATCH --time=12:00:00
-#SBATCH --output=slurm-logs1/sbatch_%j.log
-#SBATCH --error=slurm-logs1/sbatch_%j.error
+#SBATCH --partition=long
+#SBATCH --time=24:00:00
+#SBATCH --output=slurm-logs/sbatch_%j.log
+#SBATCH --error=slurm-logs/sbatch_%j.error
 
 # Load necessary modules
 ml Mamba/23.11.0-0

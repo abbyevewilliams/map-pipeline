@@ -28,9 +28,10 @@ rule all:
         expand("results/dedup/{sample}.bam", sample=SAMPLES),                   # deduplicated bams
         expand("results/dedup/{sample}.stats", sample=SAMPLES),                 # mapping stats
         expand("results/dedup/{sample}.depth", sample=SAMPLES),                 # depth stats
-        "results/mapping_summary.txt",                                           # summary of stats
-        "results/avg_depth.txt",                                                 # average depth
-        expand("results/mapdamage/{sample}/Runtime_log.txt", sample=SAMPLES)    # mapdamage results
+        "results/mapping_summary.txt",                                          # summary of stats
+        "results/avg_depth.txt",                                                # average depth
+        expand("results/mapdamage/{sample}/{sample}.rescaled.bam", sample=SAMPLES),      # mapdamage results
+        expand("results/mapdamage/{sample}/{sample}.rescaled.bam.bai", sample=SAMPLES)  # indexed mapdamage results
 
 localrules:
     all
