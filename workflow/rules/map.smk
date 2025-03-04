@@ -40,20 +40,6 @@ rule bwa_map:
     wrapper:
         "v5.8.0/bio/bwa-mem2/mem"
 
-# Sort reads
-#rule samtools_sort:
-#    input:
-#        "results/mapped/{sample}--{lane}.bam"
-#    output:
-#        "results/sorted/{sample}--{lane}.bam"
-#    log:
-#        "results/logs/samtools_sort/{sample}--{lane}.log"
-#    threads: 4
-#    resources:
-#        mem="100GB"
-#    wrapper:
-#        "v5.8.0/bio/samtools/sort"
-
 # Index the sorted bam file
 rule samtools_index:
     input:
@@ -102,6 +88,19 @@ rule markduplicates_bam:
         mem="64GB"
     wrapper:
         "v5.8.0/bio/picard/markduplicates"
+
+# Index the deduped bam file
+rule samtools_index_dedup:
+    input:
+        "results/dedup/{sample}.bam"
+    output:
+        "results/dedup/{sample}.bam.bai"
+    log:
+        "results/logs/samtools_index_dedup/{sample}.log"
+    resources:
+        mem="8GB"
+    wrapper:
+        "v5.8.0/bio/samtools/index"
 
 # Calculate depth
 rule samtools_depth:

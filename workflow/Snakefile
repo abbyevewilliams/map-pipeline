@@ -33,6 +33,7 @@ rule all:
         [f"results/sorted/{sample}--{lane}.bam.bai" for sample in SAMPLES for lane in get_lanes(sample)] +
         # Expand other outputs
         [f"results/dedup/{sample}.bam" for sample in SAMPLES] +
+        [f"results/dedup/{sample}.bam.bai" for sample in SAMPLES] +
         [f"results/dedup/{sample}.stats" for sample in SAMPLES] +
         [f"results/dedup/{sample}.depth" for sample in SAMPLES] +
         ["results/mapping_summary.txt"] + 
