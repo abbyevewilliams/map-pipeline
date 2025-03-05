@@ -12,6 +12,9 @@ ml Mamba/23.11.0-0
 source activate /data/biol-silvereye/ball6625/map-pipeline/snakemake-env
 conda config --set channel_priority strict
 
+# Ensure contemporary branch is checked out
+git checkout contemporary
+
 # Run the pipeline
 snakemake --unlock
 snakemake --workflow-profile profiles/slurm \
