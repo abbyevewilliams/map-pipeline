@@ -64,6 +64,33 @@ rule dedup:
 
         """
 
+# Sort deduped bam file
+rule samtools_sort_dedup:
+    input:
+        "results/dedup/{sample}.bam",
+    output:
+        "results/dedup/{sample}.sorted.bam",
+    log:
+        "results/logs/samtools_sort_dedup/{sample}.log",
+    threads: 8
+    resources:
+        mem="8GB"
+    wrapper:
+        "v5.8.3/bio/samtools/sort"
+
+# Index deduped bam file
+rule samtools_index_dedup:
+    input:
+        "results/dedup/{sample}.sorted.bam"
+    output:
+        "results/dedup/{sample}.sorted.bam.bai"
+    log:
+        "results/logs/samtools_index_dedup/{sample}.log"
+    resources:
+        mem="8GB"
+    wrapper:
+        "v5.8.0/bio/samtools/index"
+
 # Calculate depth
 rule samtools_depth:
     input:

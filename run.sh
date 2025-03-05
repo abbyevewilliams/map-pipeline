@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=snakemake
-#SBATCH --partition=long
-#SBATCH --time=24:00:00
+#SBATCH --partition=short
+#SBATCH --time=12:00:00
 #SBATCH --output=slurm-logs/sbatch_%j.log
 #SBATCH --error=slurm-logs/sbatch_%j.error
 

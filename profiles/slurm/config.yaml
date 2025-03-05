@@ -4,6 +4,6 @@ latency-wait: 60
 retries: 1
 
 default-resources:
-    slurm_partition: "long"
+    slurm_partition: "short"
     slurm_account:   "biol-silvereye"
-    runtime: 1440 # 24 hours
+    runtime: 720 # 24 hours
