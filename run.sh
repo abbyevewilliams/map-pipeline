@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=snakemake
+#SBATCH --job-name=zborb
 #SBATCH --partition=short
 #SBATCH --time=12:00:00
-#SBATCH --output=slurm-logs/sbatch_%j.log
-#SBATCH --error=slurm-logs/sbatch_%j.error
+#SBATCH --output=slurm-sbatch_%j.log
+#SBATCH --error=slurm-sbatch_%j.error
 
 # Load necessary modules
 ml Mamba/23.11.0-0

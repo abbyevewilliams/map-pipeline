@@ -9,10 +9,11 @@ This pipeline is specialised to work with merged, paired-end reads that have alr
 **Workflow**
 
 Main steps are outlined below:
-1. Map reads to the *Zosterops lateralis* pseudochrome assembly using [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2)
-2. Deduplication of merged paired end reads using [DeDup](https://github.com/apeltzer/DeDup)
-3. Calculate mapping stats and depth using [Samtools](https://github.com/samtools/samtools)
-4. Assess DNA damage using [MapDamage2](https://github.com/ginolhac/mapDamage)
+1. [OPIONAL] Trim reads and remove adapters using [fastp](https://github.com/OpenGene/fastp)
+2. Map reads to the *Zosterops lateralis* pseudochrome assembly using [bwa-mem2](https://github.com/bwa-mem2/bwa-mem2)
+3. Deduplication of merged paired end reads using [DeDup](https://github.com/apeltzer/DeDup) (museum samples) or [PicardMarkDuplicates](https://broadinstitute.github.io/picard/) (contemporary samples)
+4. Calculate mapping stats and depth using [Samtools](https://github.com/samtools/samtools)
+5. Assess DNA damage using [MapDamage2](https://github.com/ginolhac/mapDamage) (museum samples only)
 
 ---
 
@@ -23,7 +24,7 @@ Use conda/mamba to install the environment from the `environment.yaml` provided.
 `mamba create --prefix ./snakemake-env --file environment.yaml`
 
 Do the following prior to running: 
-- edit file paths in `config/config.yaml`
+- configure the pipeline by editing `config/config.yaml`
 - add any appropriate profiles in `profiles/`
 - edit the `run.sh` depending on your HPC environment
 

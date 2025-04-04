@@ -4,6 +4,10 @@ logs/**
 slurm-logs/
 .snakemake
 .snakemake/**
+config/*samples.txt
+!config/TEMPLATE_samples.txt
+neat/
+fastqc.sh
 
 *.dot
 *.png

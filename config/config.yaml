@@ -1,3 +1,6 @@
-clean_reads_dir: "/data/biol-silvereye/ball6625/nf-polish/museum-results/05.low_complex"
-samples: "/data/biol-silvereye/ball6625/map-pipeline/museum-samples.txt"
+reads_dir: "/data/biol-silvereye/ball6625/sra-download/fastq_output"
+samples: "/data/biol-silvereye/ball6625/map-pipeline/config/zborb-samples.txt"
 reference_genome: "/data/biol-silvereye/ball6625/ref-genome/Zlat_2_Tgutt_ZW.fasta"
+run_fastp: True
+dedup_with_picard: True
+mapdamage_rescale: False

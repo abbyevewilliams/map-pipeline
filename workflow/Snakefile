@@ -16,6 +16,10 @@ with open(config["samples"]) as f:
 # State reads
 READS = ['1', '2']
 
+# Check whether to run fastp and mapdamage
+RUN_FASTP=config["run_fastp"]
+MAPDAMAGE_RESCALE=config["mapdamage_rescale"]
+
 # =================================================================================================
 #     Default "All" Target Rule
 # =================================================================================================
@@ -24,14 +28,16 @@ READS = ['1', '2']
 
 rule all:
     input:
+        expand("results/fastqc/{sample}_{read}.html", sample=SAMPLES, read=READS), # fastqc report
+        expand("results/fastp/{sample}_{read}.fastq.gz", sample=SAMPLES, read=READS) if RUN_FASTP else [],  # fastp processed reads
         expand("results/sorted/{sample}.bam.bai", sample=SAMPLES),              # indexed bams
         expand("results/dedup/{sample}.sorted.bam.bai", sample=SAMPLES),        # deduplicated bams
         expand("results/dedup/{sample}.stats", sample=SAMPLES),                 # mapping stats
         expand("results/dedup/{sample}.depth", sample=SAMPLES),                 # depth stats
         "results/mapping_summary.txt",                                          # summary of stats
         "results/avg_depth.txt",                                                # average depth
-        expand("results/mapdamage/{sample}/{sample}.rescaled.bam", sample=SAMPLES), # mapdamage results
-        expand("results/mapdamage/{sample}/{sample}.rescaled.bam.bai", sample=SAMPLES)  # indexed mapdamage results
+        expand("results/mapdamage/{sample}/{sample}.rescaled.bam", sample=SAMPLES) if MAPDAMAGE_RESCALE else [], # mapdamage results
+        expand("results/mapdamage/{sample}/{sample}.rescaled.bam.bai", sample=SAMPLES) if MAPDAMAGE_RESCALE else []  # indexed mapdamage results
 
 localrules:
     all
@@ -40,5 +46,10 @@ localrules:
 #     Rule Modules
 # =================================================================================================
 
+
+include: "rules/fastqc.smk"
 include: "rules/map.smk"
-include: "rules/damage.smk"
+if MAPDAMAGE_RESCALE:
+    include: "rules/damage.smk"
+if RUN_FASTP:
+    include: "rules/fastp.smk"

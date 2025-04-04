@@ -12,10 +12,17 @@ rule bwa_index:
     wrapper:
         "v5.8.2/bio/bwa-mem2/index"
 
+RUN_FASTP=config["run_fastp"]
+if RUN_FASTP:
+    reads_dir="results/fastp"
+else:
+    reads_dir=config["reads_dir"]
+
 # Map merged reads to reference
 rule bwa_map:
     input:
-        reads=lambda wildcards: os.path.join(config["clean_reads_dir"], wildcards.sample, f"{wildcards.sample}_U.fastq.gz"),
+        read1=lambda wildcards: os.path.join(reads_dir, f"{wildcards.sample}_1.fastq.gz"),
+        read2=lambda wildcards: os.path.join(reads_dir, f"{wildcards.sample}_2.fastq.gz"),
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
         "results/sorted/{sample}.bam"
@@ -43,26 +50,46 @@ rule samtools_index:
         "v5.8.0/bio/samtools/index"
 
 # Remove duplicates
-rule dedup:
-    input:
-        bam="results/sorted/{sample}.bam"
-    output:
-        bam=temp("results/dedup/{sample}.bam")
-    conda: 
-        "../../envs/dedup.yaml"
-    log:
-        "results/logs/dedup/{sample}.log"
-    resources:
-        mem="100GB"
-    shell:
-        """
-        export _JAVA_OPTIONS="-Xmx90G"
-        bam={output.bam}
-        mkdir -p $(dirname $bam)
-        dedup -i {input.bam} -m -o $(dirname $bam);
-        mv ${{bam%%.bam}}_rmdup.bam $bam
 
-        """
+USE_PICARD = config["dedup_with_picard"]
+
+if USE_PICARD:
+    rule markduplicates_bam:
+            input:
+                bams="results/sorted/{sample}.bam"
+            output:
+                bam="results/dedup/{sample}.bam",
+                metrics="results/dedup/{sample}.metrics.txt"
+            log:
+                "results/logs/markduplicates/{sample}.log"
+            params:
+                extra="--REMOVE_DUPLICATES true"
+            threads: 4
+            resources:
+                mem="64GB"
+            wrapper:
+                "v5.8.0/bio/picard/markduplicates"
+else:
+    rule dedup:
+        input:
+            bam="results/sorted/{sample}.bam"
+        output:
+            bam=temp("results/dedup/{sample}.bam")
+        conda: 
+            "../../envs/dedup.yaml"
+        log:
+            "results/logs/dedup/{sample}.log"
+        resources:
+            mem="100GB"
+        shell:
+            """
+            export _JAVA_OPTIONS="-Xmx90G"
+            bam={output.bam}
+            mkdir -p $(dirname $bam)
+            dedup -i {input.bam} -m -o $(dirname $bam);
+            mv ${{bam%%.bam}}_rmdup.bam $bam
+
+            """
 
 # Sort deduped bam file
 rule samtools_sort_dedup:
