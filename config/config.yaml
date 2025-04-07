@@ -1,6 +1,6 @@
 reads_dir: "/data/biol-silvereye/ball6625/sra-download/fastq_output"
 samples: "/data/biol-silvereye/ball6625/map-pipeline/config/zborb-samples.txt"
-reference_genome: "/data/biol-silvereye/ball6625/ref-genome/Zlat_2_Tgutt_ZW.fasta"
+reference_genome: "/data/biol-silvereye/ball6625/ref-genome/GCA_965231275.1_bZosLat1.hap1.1_genomic.fna"
 run_fastp: True
 dedup_with_picard: True
 mapdamage_rescale: False

@@ -7,8 +7,8 @@ if config["run_fastp"]:
             ]
         output:
             trimmed=["results/fastp/{sample}_1.fastq.gz", "results/fastp/{sample}_2.fastq.gz"],
-            html="results/fastp/{sample}_1.html",
-            json="results/fastp/{sample}_1.json",
+            html="results/fastp/{sample}.html",
+            json="results/fastp/{sample}.json",
         log:
             "results/logs/fastp/{sample}.log"
         threads: 4

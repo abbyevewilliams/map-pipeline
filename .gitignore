@@ -1,6 +1,8 @@
 *results*/
 resources/**
 logs/**
+*.log
+*.error
 slurm-logs/
 .snakemake
 .snakemake/**
