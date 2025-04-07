@@ -21,8 +21,9 @@ else:
 # Map merged reads to reference
 rule bwa_map:
     input:
-        read1=lambda wildcards: os.path.join(reads_dir, f"{wildcards.sample}_1.fastq.gz"),
-        read2=lambda wildcards: os.path.join(reads_dir, f"{wildcards.sample}_2.fastq.gz"),
+        reads=lambda wildcards: [
+            os.path.join(reads_dir, f"{wildcards.sample}_1.fastq.gz"),
+            os.path.join(reads_dir, f"{wildcards.sample}_2.fastq.gz")],
         idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
     output:
         "results/sorted/{sample}.bam"
