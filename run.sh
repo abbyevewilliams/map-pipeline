@@ -2,8 +2,8 @@
 #SBATCH --job-name=zborb
 #SBATCH --partition=short
 #SBATCH --time=12:00:00
-#SBATCH --output=slurm-sbatch_%j.log
-#SBATCH --error=slurm-sbatch_%j.error
+#SBATCH --output=slurm_%j.log
+#SBATCH --error=slurm_%j.error
 
 # Load necessary modules
 ml Mamba/23.11.0-0

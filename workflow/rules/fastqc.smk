@@ -3,7 +3,8 @@ rule fastqc:
     input:
         lambda wildcards: os.path.join(config["reads_dir"], f"{wildcards.sample}_{wildcards.read}.fastq.gz"),
     output:
-        html="results/fastqc/{sample}_{read}.html"
+        html="results/fastqc/{sample}_{read}.html",
+        zip="results/fastqc/{sample}_{read}.zip"
     params:
         extra = "--quiet"
     log:

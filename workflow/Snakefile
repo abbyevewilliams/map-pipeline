@@ -29,7 +29,9 @@ MAPDAMAGE_RESCALE=config["mapdamage_rescale"]
 rule all:
     input:
         expand("results/fastqc/{sample}_{read}.html", sample=SAMPLES, read=READS), # fastqc report
-        expand("results/fastp/{sample}_{read}.fastq.gz", sample=SAMPLES, read=READS) if RUN_FASTP else [],  # fastp processed reads
+        expand("results/fastp/{sample}_1.fastq.gz", sample=SAMPLES) if RUN_FASTP else [],  # fastp processed reads
+        expand("results/fastp/{sample}_2.fastq.gz", sample=SAMPLES) if RUN_FASTP else [],  # fastp processed reads
+        expand("results/fastqc_post_trim/{sample}_{read}.html", sample=SAMPLES, read=READS) if RUN_FASTP else [], # fastqc report (post trim)
         expand("results/sorted/{sample}.bam.bai", sample=SAMPLES),              # indexed bams
         expand("results/dedup/{sample}.sorted.bam.bai", sample=SAMPLES),        # deduplicated bams
         expand("results/dedup/{sample}.stats", sample=SAMPLES),                 # mapping stats
