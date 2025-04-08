@@ -10,6 +10,9 @@ config/*samples.txt
 !config/TEMPLATE_samples.txt
 neat/
 fastqc.sh
+run.sh
+config/config.yaml
+profiles/slurm/config.yaml
 
 *.dot
 *.png

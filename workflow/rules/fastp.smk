@@ -1,3 +1,4 @@
+# Run fastp
 if config["run_fastp"]:
     rule fastp:
         input:
@@ -8,7 +9,10 @@ if config["run_fastp"]:
         output:
             trimmed=["results/fastp/{sample}_1.fastq.gz", "results/fastp/{sample}_2.fastq.gz"],
             html="results/fastp/{sample}.html",
-            json="results/fastp/{sample}.json",
+            json="results/fastp/{sample}.json"
+        params:
+            adapters="--adapter_sequence ATCGGAAGAGCACACGTCTGAACTCCAGTCACACTGATATATCTCGTATG --adapter_sequence_r2 ATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGT",
+            extra="--length_required 30 --qualified_quality_phred 20 --cut_front --cut_front_window_size 4 --cut_front_mean_quality 20 --cut_right --cut_right_window_size 4 --cut_right_mean_quality 20"
         log:
             "results/logs/fastp/{sample}.log"
         threads: 4

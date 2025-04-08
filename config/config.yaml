@@ -4,3 +4,4 @@ reference_genome: "/data/biol-silvereye/ball6625/ref-genome/GCA_965231275.1_bZos
 run_fastp: True
 dedup_with_picard: True
 mapdamage_rescale: False
+merged_reads: False

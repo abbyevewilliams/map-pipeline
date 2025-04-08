@@ -12,30 +12,43 @@ rule bwa_index:
     wrapper:
         "v5.8.2/bio/bwa-mem2/index"
 
+# Map reads to reference
+
 RUN_FASTP=config["run_fastp"]
 if RUN_FASTP:
     reads_dir="results/fastp"
 else:
     reads_dir=config["reads_dir"]
 
-# Map merged reads to reference
-rule bwa_map:
-    input:
-        reads=lambda wildcards: [
-            os.path.join(reads_dir, f"{wildcards.sample}_1.fastq.gz"),
-            os.path.join(reads_dir, f"{wildcards.sample}_2.fastq.gz")],
-        idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
-    output:
-        "results/sorted/{sample}.bam"
-    log:
-        "results/logs/bwa_map/{sample}.log"
-    params:
-        sort="samtools"
-    threads: 8
-    resources:
-        mem="32GB"
-    wrapper:
-        "v5.8.0/bio/bwa-mem2/mem"
+MERGED_READS=config["merged_reads"]
+if MERGED_READS:
+    rule bwa_map:
+        input:
+            reads=lambda wildcards: os.path.join(reads_dir, f"{wildcards.sample}_U.fastq.gz"),
+            idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
+        output:
+            "results/sorted/{sample}.bam"
+        log:
+            "results/logs/bwa_map/{sample}.log"
+        params:
+            sort="samtools"
+        wrapper:
+            "v5.8.0/bio/bwa-mem2/mem"
+else:
+    rule bwa_map:
+        input:
+            reads=lambda wildcards: [
+                os.path.join(reads_dir, f"{wildcards.sample}_1.fastq.gz"),
+                os.path.join(reads_dir, f"{wildcards.sample}_2.fastq.gz")],
+            idx=multiext(config["reference_genome"], ".amb", ".ann", ".bwt.2bit.64", ".pac", ".0123")
+        output:
+            "results/sorted/{sample}.bam"
+        log:
+            "results/logs/bwa_map/{sample}.log"
+        params:
+            sort="samtools"
+        wrapper:
+            "v5.8.0/bio/bwa-mem2/mem"
 
 # Index the sorted bam file
 rule samtools_index:
