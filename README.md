@@ -2,7 +2,7 @@
 *Abby Williams, University of Oxford, 2025*
 
 A pipeline for cleaned sequencing reads from avian museum samples to the *Zosterops lateralis* pseudochromosome assembly. 
-This pipeline is specialised to work with merged, paired-end reads that have already been cleaned using e.g. [nf-polish](https://github.com/MozesBlom/nf-polish).
+This pipeline is specialised to take merged, paired-end reads that have already been cleaned using e.g. [nf-polish](https://github.com/MozesBlom/nf-polish), or alternatively to do a quick clean using fastp before mapping.
 
 ---
 
