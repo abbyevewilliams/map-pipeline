@@ -39,11 +39,13 @@ Before running:
 
 You should configure the following options in the `config/config.yaml`:
 
-* `reference_genome`: path to your reference genome.
-* `samples`: the path to your samples.txt file. This should contain the following information in tab separated format: sample_id, flowcell, lane, path to read 1, path to read 2, path to merged reads. If any fields do not apply (e.g. because there are only paired end reads and no merged reads) they can be left blank. See TEMPLATE_samples.tsv.
+* `reference_genome`: path to your reference genome
+* `samples`: the path to your samples.txt file. This should contain the following information in tab separated format: sample_id, flowcell, lane, path to read 1, path to read 2, path to merged reads. If any fields do not apply (e.g. because there are only paired end reads and no merged reads) they can be left blank. See TEMPLATE_samples.tsv
 * `trim_reads`: [True/False] whether to run fastp with to trim and remove adapters. Settings can be edited in the `workflow/rules/03_map.smk`
 * `dedup_method`: ["picard" or "dedup"] whether to run PicardMarkDuplicates or DeDup for duplicate removal. Picard is favoured for modern samples whereas DeDup is favoured for historical samples (Irestedt et al 2022)
+* `remove_duplicates_picard`: whether to remove duplicates (rather than just marking them) with picard
 * `mapdamage_rescale`: [True/False] whether to use Mapdamage2 to rescale base qualities (historical samples only)
+* `fastp`: set parameters for trimming with fastp, if using.
 
 **Running the pipeline**
 

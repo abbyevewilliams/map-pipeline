@@ -10,7 +10,6 @@ samples: "/data/biol-silvereye/ball6625/pipelines/map-pipeline/config/samples.tx
 trim_reads: True
 dedup_method: "picard"
 remove_duplicates_picard: false
-add_read_groups: False
 mapdamage_rescale: False
 
 # ------------------------- PARAMS ---------------------------------------------
