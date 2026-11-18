@@ -4,8 +4,9 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python=3.11
+  - conda
+  - python
   - snakemake
   - snakemake-executor-plugin-slurm
-  - conda
-  - dedup=0.12.8
+  - dedup
+  - fastqc

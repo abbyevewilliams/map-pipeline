@@ -3,15 +3,15 @@ resources/**
 logs/**
 *.log
 *.error
-slurm-logs/
+slurm_logs/
 .snakemake
 .snakemake/**
 config/*samples.txt
+config/config.txt
+config/parse_novogene_reads.sh
 !config/TEMPLATE_samples.txt
-neat/
-fastqc.sh
+!config/TEMPLATE_config.txt
 run.sh
-config/config.yaml
 profiles/slurm/config.yaml
 
 *.dot

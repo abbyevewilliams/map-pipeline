@@ -19,9 +19,6 @@ rule mapdamage2:
         "results/logs/mapdamage/{sample}.log"
     params:
         extra="--rescale"
-    threads: 8
-    resources:
-        mem="64GB"
     wrapper:
         "v5.8.0/bio/mapdamage2"
 

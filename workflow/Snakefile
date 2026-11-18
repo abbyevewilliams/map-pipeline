@@ -9,16 +9,104 @@ import os
 # Point to config file
 configfile: "config/config.yaml"
 
-# Read in sample names
-with open(config["samples"]) as f:
-    SAMPLES = [line.strip() for line in f]
+# Load sample metadata
+samples = pd.read_csv(
+    config["samples"],
+    sep="\t",
+    dtype=str,
+    keep_default_na=False
+)
 
-# State reads
-READS = ['1', '2']
+# Create list of samples
+SAMPLES = samples["sample_id"].unique().tolist()
 
-# Check whether to run fastp and mapdamage
-RUN_FASTP=config["run_fastp"]
+# List of sample types
+SAMPLE_TYPES = (
+    samples.drop_duplicates("sample_id")
+    .set_index("sample_id")["sample_type"]
+    .to_dict()
+)
+
+# Separate out contemporary and historical samples
+CONTEMPORARY_SAMPLES = (
+    samples.loc[
+        samples["sample_type"] == "contemporary",
+        "sample_id"
+    ]
+    .unique()
+    .tolist()
+)
+
+HISTORICAL_SAMPLES = (
+    samples.loc[
+        samples["sample_type"] == "historical",
+        "sample_id"
+    ]
+    .unique()
+    .tolist()
+)
+
+# =================================================================================================
+#     Load options
+# =================================================================================================
+
+TRIM_READS=config["trim_reads"]
 MAPDAMAGE_RESCALE=config["mapdamage_rescale"]
+
+# =================================================================================================
+#     Helper functions
+# =================================================================================================
+
+#Function to get initial .fastq.gz names
+
+def get_fastq(sample, flowcell, lane, read):
+
+    # Find the matching row in the sample sheet
+    match = samples.loc[
+        (samples["sample_id"] == sample) &
+        (samples["flowcell"] == flowcell) &
+        (samples["lane"] == lane)
+    ]
+
+    if len(match) != 1:
+        raise ValueError(
+            f"Expected one match for {sample}, {flowcell}, {lane}; "
+            f"found {len(match)}"
+        )
+
+    # Return the appropriate FASTQ path
+    column = {
+        "1": "read1",
+        "2": "read2",
+        "U": "readU"
+    }[read]
+
+    fastq = match.iloc[0][column]
+
+    # Debugging statement if necessary
+    #print(f"FASTQ path: {fastq}")
+
+    if not fastq:
+        raise ValueError(
+            f"No read {read} found for {sample}, {flowcell}, {lane}"
+        )
+
+    return fastq
+
+# Function to derive targets for FastQC reports based on existing combos of sample, flowcell, lane and read
+
+FASTQC_TARGETS = {"pre_trim": [], "post_trim": []}
+
+for row in samples.itertuples():
+    for read, column in [("1", "read1"), ("2", "read2"), ("U", "readU")]:
+
+        if getattr(row, column):
+            filename = f"{row.sample_id}/{row.flowcell}_{row.lane}_{read}.html"
+
+            for stage in FASTQC_TARGETS:
+                FASTQC_TARGETS[stage].append(
+                    f"results/fastqc_{stage}/{filename}"
+                )
 
 # =================================================================================================
 #     Default "All" Target Rule
@@ -28,18 +116,10 @@ MAPDAMAGE_RESCALE=config["mapdamage_rescale"]
 
 rule all:
     input:
-        expand("results/fastqc/{sample}_{read}.html", sample=SAMPLES, read=READS), # fastqc report
-        expand("results/fastp/{sample}_1.fastq.gz", sample=SAMPLES) if RUN_FASTP else [],  # fastp processed reads
-        expand("results/fastp/{sample}_2.fastq.gz", sample=SAMPLES) if RUN_FASTP else [],  # fastp processed reads
-        expand("results/fastqc_post_trim/{sample}_{read}.html", sample=SAMPLES, read=READS) if RUN_FASTP else [], # fastqc report (post trim)
-        expand("results/sorted/{sample}.bam.bai", sample=SAMPLES),              # indexed bams
-        expand("results/dedup/{sample}.sorted.bam.bai", sample=SAMPLES),        # deduplicated bams
-        expand("results/dedup/{sample}.stats", sample=SAMPLES),                 # mapping stats
-        expand("results/dedup/{sample}.depth", sample=SAMPLES),                 # depth stats
+        FASTQC_TARGETS["pre_trim"],
+        FASTQC_TARGETS["post_trim"] if TRIM_READS else [],
         "results/mapping_summary.txt",                                          # summary of stats
         "results/avg_depth.txt",                                                # average depth
-        expand("results/mapdamage/{sample}/{sample}.rescaled.bam", sample=SAMPLES) if MAPDAMAGE_RESCALE else [], # mapdamage results
-        expand("results/mapdamage/{sample}/{sample}.rescaled.bam.bai", sample=SAMPLES) if MAPDAMAGE_RESCALE else []  # indexed mapdamage results
 
 localrules:
     all
@@ -48,10 +128,11 @@ localrules:
 #     Rule Modules
 # =================================================================================================
 
-
-include: "rules/fastqc.smk"
-include: "rules/map.smk"
+include: "rules/01_fastqc.smk"
+if TRIM_READS:
+    include: "rules/02_trim.smk"
+include: "rules/03_map.smk"
+include: "rules/04_dedup.smk"
+include: "rules/05_stats.smk"
 if MAPDAMAGE_RESCALE:
-    include: "rules/damage.smk"
-if RUN_FASTP:
-    include: "rules/fastp.smk"
+    include: "rules/04_damage.smk"

@@ -1,0 +1,19 @@
+# ------------------------- PATH TO REFERENCE GENOME ---------------------------
+reference_genome: "genomic.fna"
+
+# ------------------------- PATH TO SAMPLES ------------------------------------
+
+samples: "samples.txt"
+
+# ------------------------- WORKFLOW OPTIONS -----------------------------------
+
+trim_reads: True
+dedup_method: "picard"
+remove_duplicates_picard: false
+add_read_groups: False
+mapdamage_rescale: False
+
+# ------------------------- PARAMS ---------------------------------------------
+
+fastp:
+  extra: "--detect_adapter_for_pe --length_required 30 --qualified_quality_phred 15 --unqualified_percent_limit 40"
