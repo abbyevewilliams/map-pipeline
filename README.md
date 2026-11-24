@@ -1,5 +1,10 @@
-# A snakemake pipeline for mapping sequencing reads from modern or contemporary samples
-*Abby Williams, University of Oxford, 2025*
+# Snakemake workflow: `map-pipeline`
+
+[![Snakemake](https://img.shields.io/badge/snakemake-≥8.0.0-brightgreen.svg)](https://snakemake.github.io)
+[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
+[![workflow catalog](https://img.shields.io/badge/Snakemake%20workflow%20catalog-darkgreen)](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/abbyevewilliams/map-pipeline)
+
+A Snakemake workflow for mapping sequencing reads from modern or contemporary samples.
 
 This pipeline can take either:
 * standard paired-end reads;
@@ -7,7 +12,15 @@ This pipeline can take either:
 
 ---
 
-**Workflow**
+- [Snakemake workflow: `map-pipeline`](#map-pipeline)
+  - [Workflow](#workflow)
+  - [Setup](#setup)
+  - [Configuration](#configuration)
+  - [References](#references)
+
+---
+
+## Workflow
 
 Main steps are outlined below:
 1. [OPIONAL] Trim reads and remove adapters using [fastp](https://github.com/OpenGene/fastp)
@@ -18,7 +31,7 @@ Main steps are outlined below:
 
 ---
 
-**Installation**
+## Setup
 
 You will need a conda distribution installed on your machine prior to installation.
 
@@ -30,7 +43,7 @@ Then, use conda to install the environment from the `environment.yaml` provided.
 
 `conda create --prefix ./snakemake-env --file environment.yaml`
 
-**Configuring the workflow**
+## Configuration
 
 Before running:
 - configure the pipeline by editing `config/config.yaml`
@@ -46,6 +59,10 @@ You should configure the following options in the `config/config.yaml`:
 * `remove_duplicates_picard`: [true/false] whether to remove duplicates (rather than just marking them) with picard
 * `mapdamage_rescale`: [True/False] whether to use Mapdamage2 to rescale base qualities (historical samples only)
 * `fastp`: set parameters for trimming with fastp, if using.
+
+## References
+
+> Köster, J., Mölder, F., Jablonski, K. P., Letcher, B., Hall, M. B., Tomkins-Tinch, C. H., Sochat, V., Forster, J., Lee, S., Twardziok, S. O., Kanitz, A., Wilm, A., Holtgrewe, M., Rahmann, S., & Nahnsen, S. _Sustainable data analysis with Snakemake_. F1000Research, 10:33, 10, 33, **2021**. https://doi.org/10.12688/f1000research.29032.2.
 
 ---
 
