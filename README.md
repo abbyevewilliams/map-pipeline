@@ -47,12 +47,6 @@ You should configure the following options in the `config/config.yaml`:
 * `mapdamage_rescale`: [True/False] whether to use Mapdamage2 to rescale base qualities (historical samples only)
 * `fastp`: set parameters for trimming with fastp, if using.
 
-**Running the pipeline**
-
-For slurm clusters, run:
-
-`sbatch run.sh`
-
 ---
 
 This pipeline was built in [snakemake](https://snakemake.github.io/) using [this workflow template](https://github.com/snakemake-workflows/snakemake-workflow-template).

@@ -1,4 +1,5 @@
 # ------------------------- PATH TO REFERENCE GENOME ---------------------------
+
 reference_genome: "/data/biol-silvereye/data/ref_genome/zosterops_lateralis/GCA_965231275.1_bZosLat1.hap1.1_genomic.fna"
 
 # ------------------------- PATH TO SAMPLES ------------------------------------

@@ -15,7 +15,9 @@ set-threads:
 set-resources:
     fastqc:
         runtime: 30
-        mem_mb: 1024
+        mem_mb: 2000
+    fastp:
+        mem_mb: attempt * 16000
     bwa_mem2_pe:
         slurm_partition: "long"
         slurm_account: "biol-silvereye"

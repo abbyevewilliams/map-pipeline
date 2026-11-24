@@ -1,17 +1,20 @@
 #!/bin/bash
 #SBATCH --job-name=map-pipeline
 #SBATCH --partition=short
-#SBATCH --time=6:00:00
+#SBATCH --time=12:00:00
+#SBATCH --mem-per-cpu=2G
 #SBATCH --output=slurm_%j.log
 #SBATCH --error=slurm_%j.error
 
 # Load necessary modules
 ml Anaconda3
 
+# Check loading
+module list
+
 # Load environment with snakemake (and some other things)
-conda activate ./snakemake-env
+source activate ./snakemake-env
 
 # Run the pipeline
-snakemake --unlock
 snakemake --workflow-profile profiles/slurm \
 	--use-conda -j 200

@@ -5,6 +5,7 @@
 # Packages
 import pandas as pd
 import os
+print(sys.version)
 
 # Point to config file
 configfile: "config/config.yaml"
@@ -135,4 +136,4 @@ include: "rules/03_map.smk"
 include: "rules/04_dedup.smk"
 include: "rules/05_stats.smk"
 if MAPDAMAGE_RESCALE:
-    include: "rules/04_damage.smk"
+    include: "rules/06_damage.smk"

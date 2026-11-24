@@ -15,7 +15,10 @@ rule fastqc:
         "results/logs/fastqc_{stage}/{sample}/{flowcell}_{lane}_{read}.log"
     # Create staging directory to initially generate files, then rename how we like
     params:
-        staging_dir=lambda wc: f"results/fastqc_{wc.stage}/tmp_{wc.sample}/{wc.flowcell}_{wc.lane}_{wc.read}"
+        staging_dir=lambda wc: (
+        f"results/fastqc_{wc.stage}/{wc.sample}/"
+        f"{wc.flowcell}_{wc.lane}_{wc.read}.staging"
+    )
     # Run command and rename files, then delete originals
     shell:
         r"""
