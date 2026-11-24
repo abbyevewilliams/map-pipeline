@@ -1,0 +1,4 @@
+sample_id	flowcell	lane	read1	read2	readU	sample_type
+a1	flowcell1	L2	/data/a1_flowcell1_L2_1.fq.gz	/data/a1_flowcell1_L2_2.fq.gz		contemporary
+a1	flowcell1	L3	/data/a1_flowcell1_L3_1.fq.gz	/data/a1_flowcell1_L3_2.fq.gz		contemporary
+a2	flowcell2	L1			/data/a1_flowcell1_L1_U.fq.gz	historical

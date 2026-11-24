@@ -1,4 +1,5 @@
 # ------------------------- PATH TO REFERENCE GENOME ---------------------------
+
 reference_genome: "genomic.fna"
 
 # ------------------------- PATH TO SAMPLES ------------------------------------

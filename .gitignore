@@ -6,18 +6,14 @@ logs/**
 slurm_logs/
 .snakemake
 .snakemake/**
-config/*
+config/config.yaml
+config/samples.txt
 config/parse_novogene_reads.sh
-!config/TEMPLATE_samples.txt
-!config/TEMPLATE_config.yaml
 run.sh
 profiles/slurm/config.yaml
 
 *.dot
 *.png
-*.csv
-*.tsv
-*.txt
 *.pdf
 
 snakemake-env/
