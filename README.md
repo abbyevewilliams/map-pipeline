@@ -17,8 +17,6 @@ This pipeline can take either:
   - [Configuration](#configuration)
   - [References](#references)
 
----
-
 ## Workflow
 
 Main steps are outlined below:
