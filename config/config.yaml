@@ -4,7 +4,7 @@ reference_genome: "/data/biol-silvereye/data/ref_genome/zosterops_lateralis/GCA_
 
 # ------------------------- PATH TO SAMPLES ------------------------------------
 
-samples: "/data/biol-silvereye/ball6625/pipelines/map-pipeline/config/samples.txt"
+samples: "/data/biol-silvereye/ball6625/pipelines/map-pipeline/config/tasmania_residents_samples.txt"
 
 # ------------------------- WORKFLOW OPTIONS -----------------------------------
 

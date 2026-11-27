@@ -5,7 +5,6 @@
 # Packages
 import pandas as pd
 import os
-print(sys.version)
 
 # ==============================================================================
 #     Load options from config

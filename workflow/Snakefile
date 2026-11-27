@@ -5,8 +5,8 @@
 # Point to config file
 configfile: "config/config.yaml"
 
-# Shared metadata, settings and helper functions
-include: "common.smk"
+# Point to shared metadata, settings and helper functions
+include: "rules/common.smk"
 
 # ==============================================================================
 #     Default "All" Target Rule
@@ -19,7 +19,7 @@ rule all:
         FASTQC_TARGETS["pre_trim"],
         FASTQC_TARGETS["post_trim"] if TRIM_READS else [],
         "results/mapping_summary.txt",                        # summary of stats
-        "results/avg_depth.txt",                              # average depth
+        "results/average_depth.txt",                              # average depth
 
 localrules:
     all

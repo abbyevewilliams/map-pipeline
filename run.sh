@@ -9,12 +9,10 @@
 # Load necessary modules
 ml Anaconda3
 
-# Check loading
-module list
-
 # Load environment with snakemake (and some other things)
 source activate ./snakemake-env
 
 # Run the pipeline
+snakemake --unlock
 snakemake --workflow-profile profiles/slurm \
 	--use-conda -j 200
